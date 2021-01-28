@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Spiders observed in CZE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" charset="UTF-8">
+    <link rel="stylesheet" href="css/map.css" />
+</head>
+<body>
+    <script src="lib/d3.min.js" charset="utf-8"></script>
+    <script src="lib/three.min.js"></script>
+    <script src="lib/TrackballControls.js"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <div id="canvas-container">
+
+    </div>
+    <div class="control-panel">
+        <div class="slidecontainer">
+            <label for="date-observed-start">Time point A</label><input type="range" min="1" max="100" value="50" class="slider" id="date-observed-start">
+        </div>
+        <div class="slidecontainer">
+            <label for="date-observed-end">Time point B</label><input type="range" min="1" max="100" value="50" class="slider" id="date-observed-end">
+        </div>
+        <div id="species-checkboxes">
+            <label for="Aelurillus v-insignitus">Aelurillus v-insignitus</label><input type="checkbox" id="Aelurillus v-insignitus">
+        </div>
+        <button id="update-visualisation">Update</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "pv251-hw",
+  "version": "1.0.0",
+  "description": "A JS app for visualizing some part of data gathered for spider species in Czech Republic",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Adam Bajger, Bjorn Sandvik",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

@@ -1,0 +1,20 @@
+#canvas-container {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+}
+
+.control-panel {
+    background-color: black;
+    border: solid 1px red;
+    color: aliceblue;
+    width: 20%;
+    height: 80%;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+
+}
