@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/map.css" />
 </head>
 <body>
+    <script src="lib/jquery-3.5.1.js" charset="UTF-8"></script>
     <script src="lib/d3.min.js" charset="utf-8"></script>
     <script src="lib/three.min.js"></script>
     <script src="lib/TrackballControls.js"></script>
@@ -14,16 +15,40 @@
 
     </div>
     <div class="control-panel">
-        <div class="slidecontainer">
-            <label for="date-observed-start">Time point A</label><input type="range" min="1" max="100" value="50" class="slider" id="date-observed-start">
-        </div>
-        <div class="slidecontainer">
-            <label for="date-observed-end">Time point B</label><input type="range" min="1" max="100" value="50" class="slider" id="date-observed-end">
-        </div>
-        <div id="species-checkboxes">
-            <label for="Aelurillus v-insignitus">Aelurillus v-insignitus</label><input type="checkbox" id="Aelurillus v-insignitus">
-        </div>
-        <button id="update-visualisation">Update</button>
+        <form>
+            <div class="slidecontainer">
+                <label for="date-observed-start">Time point A</label><input type="range" min="1" max="100" value="50" class="slider" id="date-observed-start">
+            </div>
+            <div class="slidecontainer">
+                <label for="date-observed-end">Time point B</label><input type="range" min="1" max="100" value="50" class="slider" id="date-observed-end">
+            </div>
+            <div id="species-checkboxes">
+                <label for="Aelurillus v-insignitus">Aelurillus v-insignitus</label><input type="checkbox" id="Aelurillus v-insignitus">
+            </div>
+            <button id="update-visualisation">Update</button>
+        </form>
     </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            console.log("Hooking handlers");
+            var scene = new THREE.Scene();
+        });
+
+        function reload() {
+            // here we update the rendered stuff
+        }
+
+        function reloadOnSubmitOld(form){
+            let url = form.attr("action");
+            let formData = {};
+            $(form).find("input[name]").each(function (index, node) {
+                formData[node.name] = node.value;
+            });
+            $.post(url, formData).done(function (data) {
+                alert(data);
+            });
+        }
+    </script>
 </body>
 </html>
