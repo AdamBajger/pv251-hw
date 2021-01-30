@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/map.css" />
 </head>
 <body>
+    <script src="lib/moment-with-locales.min.js"></script>
     <script src="lib/jquery-3.5.1.js" charset="UTF-8"></script>
     <script src="lib/d3.min.js" charset="utf-8"></script>
     <script src="lib/three.min.js"></script>
@@ -16,27 +17,183 @@
     </div>
     <div class="control-panel">
         <form>
-            <div class="slidecontainer">
-                <label for="date-observed-start">Time point A</label><input type="range" min="1" max="100" value="50" class="slider" id="date-observed-start">
+            <div class="control-panel-field">
+                <label for="date-observed-start">Time point A</label><input type="date" id="date-observed-start">
+                <br/>
+                <label for="date-observed-end">Time point B</label><input type="date" id="date-observed-end">
             </div>
-            <div class="slidecontainer">
-                <label for="date-observed-end">Time point B</label><input type="range" min="1" max="100" value="50" class="slider" id="date-observed-end">
+            <div class="control-panel-field" id="checkboxes-utilities">
+                <button id="checkboxes-checkall-button">Vyber všechny</button>
+                <button id="checkboxes-checknone-button">Zruš všechny</button>
+                <button id="checkboxes-invert-button">Invertuj výběr</button>
             </div>
+
             <div id="species-checkboxes">
-                <label for="Aelurillus v-insignitus">Aelurillus v-insignitus</label><input type="checkbox" id="Aelurillus v-insignitus">
+
             </div>
-            <button id="update-visualisation">Update</button>
+            <div class="control-panel-field" id="sexes-checkboxes">
+                <label for="samec">Samci</label><input type="checkbox" name="samec" id="samec"/>
+                <label for="samice">Samice</label><input type="checkbox" name="samec" id="samice"/>
+                <label for="juv">Juvenilní</label><input type="checkbox" name="samec" id="juv"/>
+                <label for="ex">Neidentifikované</label><input type="checkbox" name="samec" id="ex"/>
+            </div>
+            <button id="update-visualisation-button">Update</button>
         </form>
     </div>
 
+    <div id="tooltip_window">
+        Počet druhů <span id="tt-pocet-druhu"></span><br/>
+        Počet biotopů
+
+    </div>
+
     <script type="text/javascript">
+        var v_tooltip_frozen = false;
         $(document).ready(function() {
             console.log("Hooking handlers");
-            var scene = new THREE.Scene();
+            update_dates_limits(f_oldest_date, f_newest_date);
+
+            $('#update-visualisation-button').on("click", function (e) {
+                e.preventDefault();
+                var inputA = document.getElementById("date-observed-start");
+                var inputB = document.getElementById("date-observed-end");
+                var f = "YYYY-MM-DD";
+                var oldest_date = moment(inputA.value, f);
+                var latest_date = moment(inputB.value, f);
+                // reorder the dates if they are flipped
+                if(oldest_date > latest_date) {
+                    var tmp = latest_date;
+                    latest_date = oldest_date;
+                    oldest_date = tmp
+                }
+
+                var displayed_species = new Set();
+                $("#species-checkboxes").children("input").each(function (i) {
+                   if(this.checked) {
+                       displayed_species.add(this.value);
+                   }
+                });
+
+
+
+                global_cube_array.forEach(function (cube) {
+                    global_scene.remove(cube);
+                    cube.material.dispose();
+                    cube.geometry.dispose();
+                    //cube = null;
+                });
+
+                visualize_data(global_data, oldest_date, latest_date, displayed_species);
+            });
+
+            $('#checkboxes-checkall-button').on("click", function (e) {
+                e.preventDefault();
+                $("#species-checkboxes").children("input").each(function () {
+                    this.checked = true;
+                });
+            });
+            $('#checkboxes-checknone-button').on("click", function (e) {
+                e.preventDefault();
+                $("#species-checkboxes").children("input").each(function () {
+                    this.checked = false;
+                });
+            });
+            $('#checkboxes-invert-button').on("click", function (e) {
+                e.preventDefault();
+                $("#species-checkboxes").children("input").each(function () {
+                    this.checked = !this.checked;
+                });
+            });
+
+            var canvas_container_elem = $('#canvas-container');
+            canvas_container_elem.on("object-highlighted", function (e) {
+                //console.log("highlight event captured");
+                //console.log(e.detail);
+                fill_tooltip(e.detail);
+            });
+
+
+            canvas_container_elem.on('mousedown', function (evt1) {
+                // detect only left mouse button
+                if(evt1.which === 1) {
+                    canvas_container_elem.on('mouseup mousemove', function handler(evt2) {
+                        // detect only left mouseup
+                        if (evt2.type === 'mouseup' && evt1.which === 1) {
+                            // here a click is certainly registered, listeners are removed
+                            canvas_container_elem.off('mouseup mousemove', handler);
+                            // click code...
+                            const pls = $("#tooltip_window").css("visibility");
+                            console.log(pls);
+                            console.log(v_tooltip_frozen);
+                            if (pls === "visible" || (pls === "hidden" && v_tooltip_frozen)) {
+                                v_tooltip_frozen = !v_tooltip_frozen;
+                            }
+
+
+                        } else if (Math.sqrt((evt1.pageX - evt2.pageX) ^ 2 + (evt1.pageY - evt2.pageY) ^ 2) > 5) {
+                            // A drag too big was registered, cannot be a "click",
+                            // it's a drag, stop listening
+                            canvas_container_elem.off('mouseup mousemove', handler);
+
+                        }
+                    });
+                }
+            });
+
         });
 
-        function reload() {
-            // here we update the rendered stuff
+        function update_dates_limits(latest, oldest) {
+            var f = "YYYY-MM-DD";
+            //console.log(oldest);
+            //console.log(oldest);
+            var inputA = document.getElementById("date-observed-start");
+            inputA.value = moment(latest).format(f);
+            inputA.setAttribute("min", moment(oldest).format(f));
+            inputA.setAttribute("max", moment(latest).format(f));
+            var inputB = document.getElementById("date-observed-end");
+            inputB.value = moment(oldest).format(f);
+            inputB.setAttribute("min", moment(oldest).format(f));
+            inputB.setAttribute("max", moment(latest).format(f));
+        }
+
+        function update_available_species(species) {
+            var species_list = Array.from(species);
+            for(var i = 0; i < species_list.length; i++) {
+                var specimen = species_list[i];
+                $('#species-checkboxes').append(
+                    $(document.createElement('input')).prop({
+                        id: "specimen_checkbox" + i,
+                        name: 'specimen',
+                        value: specimen,
+                        type: 'checkbox',
+                        checked: true
+                    })
+                ).append(
+                    $(document.createElement('label')).prop({
+                        for: "specimen_checkbox" + i
+                    }).html(specimen)
+                ).append(document.createElement('br'));
+            }
+
+        }
+
+        function update_available_biotops() {
+
+        }
+
+        function fill_tooltip(entry) {
+            if(!v_tooltip_frozen) {
+                return;
+            }
+            const tooltip_elem = $("#tooltip_window");
+            if(null === entry) {
+                tooltip_elem.css({"visibility": "hidden"});
+                //tooltip_elem.html("");
+            } else {
+                tooltip_elem.css({"visibility": "visible"});
+                tooltip_elem.children();
+            }
+
         }
 
         function reloadOnSubmitOld(form){
