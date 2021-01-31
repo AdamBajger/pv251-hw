@@ -1,21 +1,7 @@
 
 
 
-// old values for the Oslo data
-/*var bounds = [253700, 6637800, 273800, 6663700], // UTM 33N left, bottom, right, top
-    boundsWidth = bounds[2] - bounds[0],
-    boundsHeight = bounds[3] - bounds[1],
-    cellSize = 100,
-    xCells = boundsWidth / cellSize,
-    yCells = boundsHeight / cellSize,
-    sceneWidth = 100,
-    sceneHeight = 100 * (boundsHeight / boundsWidth),
-    boxSize = sceneWidth / xCells,
-    valueFactor = 0.02,
-    width  = window.innerWidth,
-    height = window.innerHeight;*/
-
-var bounds = [11.9970444,48.4062989,18.9689,51.2086567],//[12.18, 48.16, 18.91, 50.88], // UTM 33N left, bottom, right, top
+var bounds = [11.9970444,48.4062989,18.9689,51.2086567],// GPS bounds of the actual picture (left, bottom, right, top)
     boundsWidth = bounds[2] - bounds[0],
     boundsHeight = bounds[3] - bounds[1],
     /*shiftX = 0,
@@ -37,6 +23,15 @@ var colorScale = d3.scale.linear()
     v_highlight_color = '#0ff000';
 
 
+if(undefined === THREE) {
+    window.alert("The THREE library is somehow not defined. Idk what is wrong, but something definitely is. Feel free to cry");
+    var THREE = require("../lib/three.min");
+}
+
+if(undefined === Set) {
+    window.alert("Your browser does not implement the Set data structure. Use Firefox or Chrome or smth, idk, or this app will proably not work.");
+    var Set =  function () {};
+}
 
 var camera = new THREE.PerspectiveCamera( 20, width / height, 0.2, 1000 );
 camera.position.set(0, -200, 120);
@@ -70,6 +65,7 @@ global_scene.add(dirLight);
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+var canvasContainer;
 
 function onMouseMove( event ) {
 
@@ -92,7 +88,7 @@ function render() {
     if(controls.isIdle() && !v_tooltip_frozen){
 
         // calculate objects intersecting the picking ray
-        const intersects = raycaster.intersectObjects( global_cube_array );
+        const intersects = $(canvasContainer).is(':hover') ? raycaster.intersectObjects( global_cube_array ) : [];
 
         const current_object = intersects.length > 0 ? intersects[0].object : null;  // reference the current highlighted object
         // if currently highlighted object is different from the highlighted object from the last frame
@@ -135,19 +131,18 @@ var global_cube_array = [];
 var global_data;
 var f_oldest_date = moment.now();
 var f_newest_date = moment(0);
+
+
 var f_all_available_species = new Set();
-var f_displayble_species = new Set();
+//var f_displayble_species = new Set();
 var f_all_available_biotops = {};  // using dictionary here might seem unnecessary, but it might come handy in the future
-var f_displayable_biotops = new Set();
-var f_all_available_sexes = [true, true, true, true];
+//var f_displayable_biotops = new Set();
+//var f_all_available_sexes = [true, true, true, true];
 
 function parseData(error, data ) {
-    // use precomputed values for map bounds, datapoint geometry sizes and stuff
-    //parsing the data
-    //var parseDate = d3.time.format("%dd.%mm.%YYYY").parse; // this is a date parsing function
-
+    // use precomputed values for map bounds, datapoint geometry sizes and stuff to parse the data
     // parse dates
-    data.forEach(function (d, i) {
+    data.forEach(function (d) {
         var date = moment(d['datumdo'], "DD.MM.YYYY");
         if(date < f_oldest_date) {
             f_oldest_date = date;
@@ -162,13 +157,11 @@ function parseData(error, data ) {
         if(!f_all_available_biotops.hasOwnProperty(d['kodbiotopu'])) {
             f_all_available_biotops[d['kodbiotopu']] = d['biotop'];
         }
-        var _labels = ['samec', 'samice', 'ex', 'juv', 'vyska']
+        var _labels = ['samec', 'samice', 'ex', 'juv', 'vyska'];
         for(var _l =0; _l <_labels.length; _l++) {
             //console.log(_labels[_l]);
             d[_labels[_l]] = +d[_labels[_l]];
         }
-
-
 
     });
     console.log(f_all_available_biotops);
@@ -235,15 +228,7 @@ function visualize_data(data, date_first, date_last, displayed_species, sexes, d
 
     // here we rollup data based on the grouping and we retain only the necessary informations
     var rolled_data = nest.rollup(function(entry) {
-        /*parsed_entry = {
-        "samec": d3.sum(entry, function(d) { return d["samec"]; }),
-        "samice": d3.sum(entry, function(d) { return d["samice"]; }),
-        "juv": d3.sum(entry, function(d) { return d["juv"]; }),
-        "ex": d3.sum(entry, function(d) { return d["ex"]; }),
-        "vyska": d3.mean(entry, function(d) { return d["vyska"]; })
-        };*/
-
-        parsed_entry = {
+        var parsed_entry = {
             "samec": 0,
             "samice": 0,
             "juv": 0,
@@ -299,18 +284,18 @@ function visualize_data(data, date_first, date_last, displayed_species, sexes, d
     data = data_back_to_normal;
 
     // visualisation part - no more processing
-    var f_displayble_species = new Set();
-    var f_displayable_biotops = new Set();
+    //var f_displayble_species = new Set();
+    //var f_displayable_biotops = new Set();
     var max = 0;
     // Go over every datapoint (up to a limit TODO{ remove a limit} )
     for (var i = 0; i < data.length; i++) {
         // variables for extracting data from the original dataset. Obviously I am not starting from scratch (technically)
         // I have to completely rewrite the rendering system, but at least this app showed me how to make the scene and stuff
-        var id = i, // We will be indexing by the row number, cuz we dont have any other way in the data
-                    // TODO: parseFload might be done earlier
+        var// id = i,
+            // TODO: Do we need GPS data to be strings for grouping reasons?? Cant we do parseFloat earlier in the code?
             utmX = parseFloat(data[i]['delka']), // Recorded geographical latitude
             utmY = parseFloat(data[i]['sirka']), // Recorded geographical longitude
-            utmZ = parseFloat(data[i]['vyska']), // Recorded geographical altitude (above sea level)
+            //utmZ = parseFloat(data[i]['vyska']), // Recorded geographical altitude (above sea level)
             // What the fuck?
             sceneX = (utmX - bounds[0]) / (boundsWidth / sceneWidth) - sceneWidth / 2 ,
             sceneY = (utmY - bounds[1]) / (boundsHeight / sceneHeight) - sceneHeight / 2 ,
@@ -366,7 +351,7 @@ function visualize_data(data, date_first, date_last, displayed_species, sexes, d
 
 
 window.onload = function () {
-    let canvasContainer = document.getElementById("canvas-container");
+    canvasContainer = document.getElementById("canvas-container");
 
     canvasContainer.appendChild( renderer.domElement );
     controls = new THREE.TrackballControls(camera, canvasContainer);
@@ -377,7 +362,7 @@ window.onload = function () {
 window.addEventListener( 'mousemove', onMouseMove, false );
 
 // handle resize event
-window.onresize = function (ev) {
+window.onresize = function (/*ev*/) {
     console.log("Handling resize event is not supported");
     /*width  = window.innerWidth*0.75;
     height = window.innerHeight;

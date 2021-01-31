@@ -13,15 +13,23 @@
     <script src="lib/TrackballControls.js"></script>
     <script type="text/javascript" src="js/map.js"></script>
     <div id="canvas-container">
+        <div id="tooltip_window">
+            Počet druhů: <span id="tt-pocet-druhu"></span><br/>
+            Počet biotopů: <span id="tt-pocet-biotopu"></span><br/>
+            Celkem Pozorování: <span id="tt-pocet-celkem"></span><br/>
+            Samců/Samic/Mláďat/Neurčeno:<br/>
+            <span id="tt-pocet-sexes"></span>
 
+        </div>
     </div>
     <div class="control-panel">
+        <button id="show-help-button">?</button>
         <form>
             <div class="control-panel-field">
                 <span class="control-panel-header">Urči období nálezů</span>
-                <label for="date-observed-start">Nejstarší</label><input type="date" id="date-observed-start">
+                <div class="date-span"><label for="date-observed-start">Nejstarší:<input type="date" id="date-observed-start"></label></div>
                 <br/>
-                <label for="date-observed-end">Nejmladší</label><input type="date" id="date-observed-end">
+                <div class="date-span"><label for="date-observed-end">Nejmladší:<input type="date" id="date-observed-end"></label></div>
             </div>
 
             <div class="control-panel-field">
@@ -53,23 +61,19 @@
 
 
             <div class="control-panel-field" id="sexes-checkboxes">
-                <label for="samec">Samci</label><input type="checkbox" name="samec" id="samec"/>
-                <label for="samice">Samice</label><input type="checkbox" name="samec" id="samice"/>
-                <label for="juv">Juvenilní</label><input type="checkbox" name="samec" id="juv"/>
-                <label for="ex">Neidentifikované</label><input type="checkbox" name="samec" id="ex"/>
+                <span class="control-panel-header">Filtruj podle pohlaví</span>
+                <div class="checkboxes-list">
+                    <label for="checkbox-sex-samec">Samci</label><input type="checkbox" name="samec" id="checkbox-sex-samec" checked/>
+                    <label for="checkbox-sex-samice">Samice</label><input type="checkbox" name="samec" id="checkbox-sex-samice" checked/>
+                    <label for="checkbox-sex-juv">Mláďata</label><input type="checkbox" name="samec" id="checkbox-sex-juv" checked/>
+                    <label for="checkbox-sex-ex">Neurčeno</label><input type="checkbox" name="samec" id="checkbox-sex-ex" checked/>
+                </div>
             </div>
-            <button id="update-visualisation-button">Update</button>
+            <button id="update-visualisation-button">Zaveď změny!</button>
         </form>
     </div>
 
-    <div id="tooltip_window">
-        Počet druhů: <span id="tt-pocet-druhu"></span><br/>
-        Počet biotopů: <span id="tt-pocet-biotopu"></span><br/>
-        Celkem Pozorování: <span id="tt-pocet-celkem"></span><br/>
-        Samců/Samic/Mláďat/Neurčeno:<br/>
-        <span id="tt-pocet-sexes"></span>
 
-    </div>
 
     <script type="text/javascript">
         var v_tooltip_frozen = false;
@@ -106,6 +110,11 @@
                 });
                 console.log(displayed_biotops);
 
+                var displayed_sexes = [
+                    $("#checkbox-sex-samec")[0].checked, $("#checkbox-sex-samice")[0].checked, $("#checkbox-sex-juv")[0].checked, $("#checkbox-sex-ex")[0].checked
+                ];
+                console.log(displayed_sexes);
+
 
                 var _cube;
                 while ((_cube = global_cube_array.pop()) != null) {
@@ -114,11 +123,9 @@
                     _cube.geometry.dispose();
                 }
 
-                //global_cube_array.forEach(function (cube){});
-                //global_cube_array = [];
 
 
-                visualize_data(global_data, oldest_date, latest_date, displayed_species, undefined, displayed_biotops);
+                visualize_data(global_data, oldest_date, latest_date, displayed_species, displayed_sexes, displayed_biotops);
             });
 
             $('#checkboxes-species-checkall-button').on("click", function (e) {
@@ -162,8 +169,6 @@
 
             var canvas_container_elem = $('#canvas-container');
             canvas_container_elem.on("object-highlighted", function (e) {
-                //console.log("highlight event captured");
-                //console.log(e.detail);
                 fill_tooltip(e.detail);
             });
 
@@ -293,8 +298,8 @@
 
                 $("#species-checkboxes").children("label").each(function (label) {
                     var specimen = this.firstChild.value;
-                    if( !entry.nazvy.has(specimen)) {
-                        $(this).css("background-color", "grey");
+                    if( entry.nazvy.has(specimen)) {
+                        $(this).css("background-color", "darkgreen");
                     } else {
                         $(this).css("background-color", "");
                     }
@@ -302,8 +307,8 @@
 
                 $("#biotops-checkboxes").children("label").each(function (label) {
                     var biotop = this.firstChild.value;
-                    if( !entry.kodybiotopu.has(biotop)) {
-                        $(this).css("background-color", "grey");
+                    if( entry.kodybiotopu.has(biotop)) {
+                        $(this).css("background-color", "darkgreen");
                     } else {
                         $(this).css("background-color", "");
                     }
