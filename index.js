@@ -3,7 +3,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 5000;;
+const port = process.env.PORT || 5000;
 
 // Used resources such as CSS, js libraries and plugins, datasets, etc.
 app.use(express.static('css'));
@@ -23,12 +23,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // comunication settings
 app.get('/', function(req, res) { res.sendFile(__dirname + "/index.html")});
 
-app.post('/api/data', function(request, response) {
+/*app.post('/api/data', function(request, response) {
     var postBody = request.body;
     console.log(postBody);
     console.log(response);
     response.send("OK")
-});
+});*/
 
 app.listen(port, function (){console.log('PV251 homework app is listening on port '+port+'!')});
 
