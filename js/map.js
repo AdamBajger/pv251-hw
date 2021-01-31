@@ -18,7 +18,7 @@ var bounds = [11.9970444,48.4062989,18.9689,51.2086567],// GPS bounds of the act
     height = window.innerHeight;
 
 var colorScale = d3.scale.linear()
-    .domain([0, 100, 400])
+    .domain([0, 40, 400])
     .range(['#000000', '#aa0d1c', '#ff00ff']),
     v_highlight_color = '#0ff000';
 

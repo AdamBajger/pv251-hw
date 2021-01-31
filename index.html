@@ -262,14 +262,11 @@
             var c = document.getElementById("gradient-legend");
             var ctx = c.getContext("2d");
 
-            /*
-            .domain([0, 100, 400])
-            .range(['#000000', '#aa0d1c', '#ff00ff'])
-            */
+
 
             var grd = ctx.createLinearGradient(0, 0,300, 0);
             grd.addColorStop(0, "#000000");
-            grd.addColorStop(0.25, "#aa0d1c");
+            grd.addColorStop(0.1, "#aa0d1c");
             grd.addColorStop(1, "#ff00ff");
 
             ctx.fillStyle = grd;
