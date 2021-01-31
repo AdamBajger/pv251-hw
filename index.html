@@ -199,7 +199,7 @@
             //console.log(oldest);
             //console.log(oldest);
             var inputA = document.getElementById("date-observed-start");
-            inputA.value = moment(latest).subtract(10, "years").format(f);
+            inputA.value = moment(oldest).format(f);
             inputA.setAttribute("min", moment(oldest).format(f));
             inputA.setAttribute("max", moment(latest).format(f));
             var inputB = document.getElementById("date-observed-end");

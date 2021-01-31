@@ -124,13 +124,7 @@ function render() {
             }
 
     }
-        //intersects[ 0 ]
 
-    /*for ( let i = 0; i < intersects.length; i ++ ) {
-
-        intersects[ i ].object.material.color.set( 0xff0000 );
-
-    }*/
     requestAnimationFrame(render);
     renderer.render(global_scene, camera);
 }
@@ -309,7 +303,7 @@ function visualize_data(data, date_first, date_last, displayed_species, sexes, d
     var f_displayable_biotops = new Set();
     var max = 0;
     // Go over every datapoint (up to a limit TODO{ remove a limit} )
-    for (var i = 0; i < data.length%10000; i++) {
+    for (var i = 0; i < data.length; i++) {
         // variables for extracting data from the original dataset. Obviously I am not starting from scratch (technically)
         // I have to completely rewrite the rendering system, but at least this app showed me how to make the scene and stuff
         var id = i, // We will be indexing by the row number, cuz we dont have any other way in the data
