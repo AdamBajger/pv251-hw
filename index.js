@@ -30,5 +30,5 @@ app.post('/api/data', function(request, response) {
     response.send("OK")
 });
 
-app.listen(port, function (){console.log('Example app listening on port '+port+'!')});
+app.listen(port, function (){console.log('PV251 homework app is listening on port '+port+'!')});
 
