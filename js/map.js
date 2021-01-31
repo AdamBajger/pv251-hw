@@ -18,7 +18,7 @@ var bounds = [11.9970444,48.4062989,18.9689,51.2086567],// GPS bounds of the act
     height = window.innerHeight;
 
 var colorScale = d3.scale.linear()
-    .domain([0, 100, 200])
+    .domain([0, 100, 400])
     .range(['#000000', '#aa0d1c', '#ff00ff']),
     v_highlight_color = '#0ff000';
 
@@ -328,8 +328,9 @@ function visualize_data(data, date_first, date_last, displayed_species, sexes, d
             max = value;
         }
 
+        var cube_height = Math.sqrt(value * valueFactor);
         // this sets the geometry used for the created objects
-        var geometry = new THREE.BoxGeometry(boxSize, boxSize, value * valueFactor);
+        var geometry = new THREE.BoxGeometry(boxSize, boxSize, cube_height);
 
         // this will determine the lighting and rendering of the faces of the created object
         var material = new THREE.MeshPhongMaterial({
@@ -340,7 +341,7 @@ function visualize_data(data, date_first, date_last, displayed_species, sexes, d
         // here we declare the object, that will be rendered, based on the material and geometry declared earlier
         var cube = new THREE.Mesh(geometry, material);
         cube.userData = data[i];
-        cube.position.set(sceneX, sceneY, value * valueFactor / 2 + 0.01);  // set the object position
+        cube.position.set(sceneX, sceneY, cube_height / 2 + 0.01);  // set the object position
 
         global_scene.add(cube);
 

@@ -22,13 +22,55 @@
 
         </div>
     </div>
+
+    <div id="help-div" class="control-panel">
+        <button class="corner-button" id="hide-help-button">X</button>
+            <p>
+                Tato vizualizace vznikla za účelem vzdělávání.
+                Slouží k zobrazovaní primárně dat pozorování různých druhů pavouků v České Republice.
+                Pokud se myš nachází nad 3D scénu, lze jí kliknutím a následným tahem posouvat nebo otáčet podle toho,
+                zda použijete levé nebo pravé tlačítko myši. Funkce přiblížení je dostupná  zkrze kolečko myši (scroll).
+            </p>
+        <p>
+            V levé části obrazovky se nacházi ovládací panel. Ten umožňuje filtrovat zobrazovaná data.
+        </p>
+        <ul>
+            <li>Období nálezu - Pomocí dvou dat určete období, ve kterém nález proběhl.</li>
+            <li>Výběr druhů - Označ které druhy pavouků tě zajímají</li>
+            <li>Výběr biotopů - Označ biotopy, ve kterých chceš sledovat nálezy.</li>
+            <li>Pohlaví - Nálezy mohou popisovat počty samců, samic, nevyvinutých jedinců (mláďat) nebo pohlaví nebylo určeno</li>
+        </ul>
+
+        <p>
+            Pokud přesunete myš nad některý z hranolů na scéně, hranol se zvýrazní
+            a v pravé horní částí scény se zobrazí průhledný nástrojový tip obsahující dodatečné informace
+            o zvýrazněném hranol. Pokud na hranol kliknete, nástrojový tip a podbarvení je zmraženo a přetrvá do doby,
+            než kliknete znovu kdekoli uvnitř 3D scény.
+        </p>
+        <p>
+            Pokud je některý hranol zvýrazněna, jsou také v pravé části podbarveny druhy a biotopy,
+            obsažené v datech, které zvýrazněný hranol tvoří.
+        </p>
+        <p>
+            Obarvení hranolů je lineární vzdhledem ke škále uvedené ve spodní části kontrolního panelu
+            a odpovídá hodnotám od 0 do 400 pozorování. Hodnoty vyšší než 400 zůstavají obarveny stejnou barvou.
+            Škálování hranolu je inverzně kvadratické (odmocnina) vůči počtu pozorování reprezentovaných daným hranolem
+            z důvodu zlepšení integrace extrémních hodnot do celé vizualizace.
+        </p>
+        <p>
+            Tuto nápovědu zavřete tlačítkem v pravém horním rohu tohoto okna.
+            Pokud byste chtěli nápovědu znovu zobrazit, stiskněte tlačítko otazníku v pravém horním rohu ovládacího panelu vravo.
+        </p>
+
+    </div>
     <div class="control-panel">
-        <button id="show-help-button">?</button>
+        <button class="corner-button" id="show-help-button">?</button>
+
         <form>
             <div class="control-panel-field">
                 <span class="control-panel-header">Urči období nálezů</span>
                 <div class="date-span"><label for="date-observed-start">Nejstarší:<input type="date" id="date-observed-start"></label></div>
-                <br/>
+
                 <div class="date-span"><label for="date-observed-end">Nejmladší:<input type="date" id="date-observed-end"></label></div>
             </div>
 
@@ -69,6 +111,15 @@
                     <label for="checkbox-sex-ex">Neurčeno</label><input type="checkbox" name="samec" id="checkbox-sex-ex" checked/>
                 </div>
             </div>
+            <div class="control-panel-field">
+                <div class="control-panel-header">
+                    Barevné odlišení hodnot
+                </div>
+                <div id="gradient-legend-div">
+                    0 <canvas id="gradient-legend" width="300" height="10">
+                    Your browser does not support the HTML5 canvas tag.</canvas> 400+
+                </div>
+            </div>
             <button id="update-visualisation-button">Zaveď změny!</button>
         </form>
     </div>
@@ -80,6 +131,7 @@
         $(document).ready(function() {
             console.log("Hooking handlers");
             update_dates_limits(f_oldest_date, f_newest_date);
+            render_legend();
 
             $('#update-visualisation-button').on("click", function (e) {
                 e.preventDefault();
@@ -166,6 +218,13 @@
                 });
             });
 
+            $('#hide-help-button').on("click", function () {
+                $('#help-div').css("display", "none");
+            });
+            $('#show-help-button').on("click", function () {
+                $('#help-div').css("display", "");
+            });
+
 
             var canvas_container_elem = $('#canvas-container');
             canvas_container_elem.on("object-highlighted", function (e) {
@@ -198,6 +257,24 @@
             });
 
         });
+
+        function render_legend() {
+            var c = document.getElementById("gradient-legend");
+            var ctx = c.getContext("2d");
+
+            /*
+            .domain([0, 100, 400])
+            .range(['#000000', '#aa0d1c', '#ff00ff'])
+            */
+
+            var grd = ctx.createLinearGradient(0, 0,300, 0);
+            grd.addColorStop(0, "#000000");
+            grd.addColorStop(0.25, "#aa0d1c");
+            grd.addColorStop(1, "#ff00ff");
+
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, 300, 10);
+        }
 
         function update_dates_limits(oldest, latest) {
             var f = "YYYY-MM-DD";
