@@ -32,8 +32,9 @@ var bounds = [11.9970444,48.4062989,18.9689,51.2086567],//[12.18, 48.16, 18.91, 
     height = window.innerHeight;
 
 var colorScale = d3.scale.linear()
-    .domain([0, 50, 150, 200])
-    .range(['#000000', '#aa0d1c', '#fdfd00', '#aaffff']);
+    .domain([0, 100, 200])
+    .range(['#000000', '#aa0d1c', '#ff00ff']),
+    v_highlight_color = '#0ff000';
 
 
 
@@ -88,7 +89,7 @@ function render() {
     raycaster.setFromCamera( mouse, camera );
 
     // calculate intersection only when the controls are idle to save memory and make things less chaotic
-    if(controls.isIdle()){
+    if(controls.isIdle() && !v_tooltip_frozen){
 
         // calculate objects intersecting the picking ray
         const intersects = raycaster.intersectObjects( global_cube_array );
@@ -108,7 +109,7 @@ function render() {
                 _detail = current_object.userData;
                 v_last_highlighted_object = current_object;  // store the reference on it
                 v_color_before_highlighting = v_last_highlighted_object.material.color.getHex();  // store its original color
-                current_object.material.color.set( 0xff0000 );  // change the color of the highlighted object
+                current_object.material.color.set( v_highlight_color );  // change the color of the highlighted object
             } else {
                 // or if we are highlighting null object (no object under the mouse), null everything
                 v_last_highlighted_object = null;
@@ -183,6 +184,7 @@ function parseData(error, data ) {
 
     visualize_data(global_data);
     update_available_species(f_all_available_species);
+    update_available_biotops(Object.keys(f_all_available_biotops));
 
 }
 
@@ -209,15 +211,14 @@ function visualize_data(data, date_first, date_last, displayed_species, sexes, d
         sexes = [true, true, true, true];
     }
     if (undefined === displayed_biotops) {
-        displayed_biotops = f_all_available_biotops;
+        displayed_biotops = new Set(Object.keys(f_all_available_biotops));
     }
 
     console.log(data.length);
     // filter out data that are not requested by user
     data = data.filter(function(d) { return (date_first <= d['datumdo']) && (date_last >= d['datumdo']);}); // filter by date
-
     data = data.filter(function(d) { return displayed_species.has(d['nazev']);}); // filter species
-    data = data.filter(function(d) { return displayed_biotops.hasOwnProperty(d["kodbiotopu"]);});
+    data = data.filter(function(d) { return displayed_biotops.has(d["kodbiotopu"]);});
     console.log(data.length);
 
     // I am not proud of this nasty nest hacking, but D3 is the only way to go and it just sucks, when you are not used to it
@@ -340,7 +341,9 @@ function visualize_data(data, date_first, date_last, displayed_species, sexes, d
             if()return cum+cur;
         }); */
         if(value === 0) {
+            console.log("Skipped");
             continue;
+
         }
         if(value > max){
             max = value;
