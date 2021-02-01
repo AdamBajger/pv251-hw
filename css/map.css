@@ -12,7 +12,7 @@
     border: solid 1px black;
     color: aliceblue;
     width: 25%;
-    height: 1000px;
+    /*height: 1000px;*/
     position: absolute;
     padding-left: 5px;
     right: 0;
@@ -159,7 +159,7 @@
 }
 
 #gradient-legend {
-    width: 300px;
+    width: calc(95% - 50px);
     height: 10px;
     border:1px solid #d3d3d3;
 }

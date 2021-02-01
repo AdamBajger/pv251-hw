@@ -105,10 +105,10 @@
             <div class="control-panel-field" id="sexes-checkboxes">
                 <span class="control-panel-header">Filtruj podle pohlaví</span>
                 <div class="checkboxes-list">
-                    <label for="checkbox-sex-samec">Samci</label><input type="checkbox" name="samec" id="checkbox-sex-samec" checked/>
-                    <label for="checkbox-sex-samice">Samice</label><input type="checkbox" name="samec" id="checkbox-sex-samice" checked/>
-                    <label for="checkbox-sex-juv">Mláďata</label><input type="checkbox" name="samec" id="checkbox-sex-juv" checked/>
-                    <label for="checkbox-sex-ex">Neurčeno</label><input type="checkbox" name="samec" id="checkbox-sex-ex" checked/>
+                    <input type="checkbox" name="samec" id="checkbox-sex-samec" checked/><label for="checkbox-sex-samec">Samci</label><br/>
+                    <input type="checkbox" name="samec" id="checkbox-sex-samice" checked/><label for="checkbox-sex-samice">Samice</label><br/>
+                    <input type="checkbox" name="samec" id="checkbox-sex-juv" checked/><label for="checkbox-sex-juv">Mláďata</label><br/>
+                    <input type="checkbox" name="samec" id="checkbox-sex-ex" checked/><label for="checkbox-sex-ex">Neurčeno</label><br/>
                 </div>
             </div>
             <div class="control-panel-field">
@@ -263,8 +263,8 @@
             var ctx = c.getContext("2d");
 
 
-
-            var grd = ctx.createLinearGradient(0, 0,300, 0);
+            var _w = $(c).width();
+            var grd = ctx.createLinearGradient(0, 0,_w, 0);
             grd.addColorStop(0, "#000000");
             grd.addColorStop(0.1, "#aa0d1c");
             grd.addColorStop(1, "#ff00ff");
