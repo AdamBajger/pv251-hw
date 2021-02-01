@@ -3,7 +3,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 // Used resources such as CSS, js libraries and plugins, datasets, etc.
 app.use(express.static('css'));
