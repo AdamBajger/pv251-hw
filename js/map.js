@@ -375,4 +375,4 @@ window.onresize = function (/*ev*/) {
 };
 
 var csvParser = d3.dsv(',', 'text/plain');
-csvParser('data/pavouci-lofi-grouped-summed.csv').get(parseData);
+csvParser('data/pavouci-dummy-refined.csv').get(parseData);
