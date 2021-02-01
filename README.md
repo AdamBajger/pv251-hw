@@ -37,4 +37,5 @@ Měla by se vám zobrazit zpráva ```PV251 homework app is listening on port 300
 a měli byste na <a href="http://localhost:3000/">adrese</a> lokálního zprostředkovatele nalézt běžící aplikaci.
 
 ##Použití
+
 Při spuštění aplikace se zobrazí okno s nápovědou, která vysvětluje použití.
