@@ -8,7 +8,7 @@ Všechny tyto knihovny jsou součástí repozitáře, není tedy třeba nic moc 
 
 Pro pohyb po 3D mapě je využíván modul <a href="https://gist.github.com/DanLeininger/8c53afa96d63b31ff902">TrackballControls.js</a>, který byl ale upraven tak, aby se kamera neotáčela kolem osy pozorovatele a mapa tak vždy zůstávala ve vodorovné poloze.
 
-##Instalace a spuštění
+## Instalace a spuštění
 
 Celý projekt běží na straně uživatele, nicméně vzhledem k tomu,
 že prohlížeče neumožňují načítat cross-origin požadavky,
@@ -36,6 +36,6 @@ nejprve nainstalujete závislosti projektu a poté pro něj spustíte lokální 
 Měla by se vám zobrazit zpráva ```PV251 homework app is listening on port 3000!```
 a měli byste na <a href="http://localhost:3000/">adrese</a> lokálního zprostředkovatele nalézt běžící aplikaci.
 
-##Použití
+## Použití
 
 Při spuštění aplikace se zobrazí okno s nápovědou, která vysvětluje použití.
