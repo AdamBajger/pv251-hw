@@ -38,4 +38,17 @@ a měli byste na <a href="http://localhost:3000/">adrese</a> lokálního zprost�
 
 ## Použití
 
-Při spuštění aplikace se zobrazí okno s nápovědou, která vysvětluje použití.
+Po spuštění a otevření aplikace na patřičné adrese zobrazí okno s nápovědou, která vysvětluje použití.
+
+### Vlastní data
+
+Pokud byste chtěli vizualizovat vlastní data, tak je to možné za předpokladu,
+že data budou obsahovat stejná pole jako referenční data přiložená v repozitáři a bude obsahovat stejné oddělovače (sloupců i desetinných míst)
+
+Referenční data byla též segmentována tak, aby na mapě tvořila pěknou mřížku.
+Toto předzpracování bohužel není součástí aplikace, nicméně není nutné pro běh aplikace.
+Nejedná se však o nic složitého, stačí zvolit velikost políčka mřížky, označme ***C***, a pak každou hodnotu ***L*** ve sloupcích s polohou snížit o hodnotu výrazu ***\[ (L modulo C) - (C x 0.5) \]***.
+<br/>
+Jednodušší varianta je pak prostě zaokrouhlit hodnoty polohy na některý počet desetinných míst.
+
+V souboru ```js/map.js```, úplně na konci je řádek kódu obsahující cestu k souboru s vizualizovanými daty. Tuto cestu přepište tak, aby ukazovala na soubor, který má být použit.
