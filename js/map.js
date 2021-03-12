@@ -129,8 +129,8 @@ function render() {
 // this array keeps the geometries visualizes, so we can access them later and modify them
 var global_cube_array = [];
 var global_data;
-var f_oldest_date = moment.now();
-var f_newest_date = moment(0);
+var f_oldest_date = moment(0);
+var f_newest_date = moment.now();
 
 
 var f_all_available_species = new Set();
@@ -374,5 +374,6 @@ window.onresize = function (/*ev*/) {
     renderer.setSize(width, height);*/
 };
 
+// Here we specify the path to the CSV source file
 var csvParser = d3.dsv(',', 'text/plain');
 csvParser('data/pavouci-dummy-refined.csv').get(parseData);

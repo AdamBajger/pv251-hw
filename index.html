@@ -44,12 +44,12 @@
         <p>
             Pokud přesunete myš nad některý z hranolů na scéně, hranol se zvýrazní
             a v pravé horní částí scény se zobrazí průhledný nástrojový tip obsahující dodatečné informace
-            o zvýrazněném hranol. Pokud na hranol kliknete, nástrojový tip a podbarvení je zmraženo a přetrvá do doby,
+            o zvýrazněném hranolu. Pokud na hranol kliknete, nástrojový tip a podbarvení je zmraženo a přetrvá do doby,
             než kliknete znovu kdekoli uvnitř 3D scény.
         </p>
         <p>
-            Pokud je některý hranol zvýrazněna, jsou také v pravé části podbarveny druhy a biotopy,
-            obsažené v datech, které zvýrazněný hranol tvoří.
+            Pokud je některý hranol zvýrazněn, jsou také v pravé části podbarveny druhy a biotopy,
+            obsažené v datech, která zvýrazněný hranol tvoří.
         </p>
         <p>
             Obarvení hranolů je lineární vzdhledem ke škále uvedené ve spodní části kontrolního panelu
@@ -148,14 +148,14 @@
                 }
 
                 var displayed_species = new Set();
-                $("#species-checkboxes").children("label").each(function (i) {
+                $("#species-checkboxes").children("label").each(function () {
                    if(this.firstChild.checked) {
                        displayed_species.add(this.firstChild.value);
                    }
                 });
 
                 var displayed_biotops = new Set();
-                $("#biotops-checkboxes").children("label").each(function (i) {
+                $("#biotops-checkboxes").children("label").each(function () {
                     if(this.firstChild.checked) {
                         displayed_biotops.add(this.firstChild.value);
                     }
@@ -346,11 +346,11 @@
                 tooltip_elem.css({"visibility": "hidden"});
                 //tooltip_elem.html("");
 
-                $("#species-checkboxes").children("label").each(function (label) {
+                $("#species-checkboxes").children("label").each(function () {
                     $(this).css("background-color", "");
                 });
 
-                $("#biotops-checkboxes").children("label").each(function (label) {
+                $("#biotops-checkboxes").children("label").each(function () {
                     $(this).css("background-color", "");
                 });
 
@@ -370,7 +370,7 @@
                 });
 
 
-                $("#species-checkboxes").children("label").each(function (label) {
+                $("#species-checkboxes").children("label").each(function () {
                     var specimen = this.firstChild.value;
                     if( entry.nazvy.has(specimen)) {
                         $(this).css("background-color", "darkgreen");
@@ -379,7 +379,7 @@
                     }
                 });
 
-                $("#biotops-checkboxes").children("label").each(function (label) {
+                $("#biotops-checkboxes").children("label").each(function () {
                     var biotop = this.firstChild.value;
                     if( entry.kodybiotopu.has(biotop)) {
                         $(this).css("background-color", "darkgreen");
@@ -389,17 +389,6 @@
                 });
             }
 
-        }
-
-        function reloadOnSubmitOld(form){
-            let url = form.attr("action");
-            let formData = {};
-            $(form).find("input[name]").each(function (index, node) {
-                formData[node.name] = node.value;
-            });
-            $.post(url, formData).done(function (data) {
-                alert(data);
-            });
         }
     </script>
 </body>
